@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>旅程作成</title>
+    <style>
+        /* 地図を画面全体に表示させる設定 */
+        html {
+            height: 100%;
+        }
+        body {
+            height: 100%;
+            margin: 0;
+        }
+    </style>
+    <!-- Vue.js -->
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <!-- Leaflet -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css" integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ==" crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.5.1/dist/leaflet.js" integrity="sha512-GffPMF3RvMeYyc1LWMHtK8EbPv0iNZ8/oTtHPx9/cc2ILxQ+u905qIwdpULaqDkyBKgOaB57QTMg7ztg8Jm2Og==" crossorigin=""></script>
+    <!-- Bootstrap5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+    <link href="css/styles.css" rel="stylesheet" />
+  </head>
+  <body>
+    <div id="app" style="height: 100%;">
+        <div class="d-flex" id="wrapper">
+            <!-- Sidebar-->
+            <div class="border-end bg-white" id="sidebar-wrapper">
+                <div class="list-group list-group-flush">
+                    <ul class="nav nav-tabs">
+                        <li class="nav-item">
+                            <a class="nav-link active" href="#tab1" data-bs-toggle="tab">旅行先一覧</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#tab2" data-bs-toggle="tab">旅程表</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#tab3" data-bs-toggle="tab">APIキーの入力</a>
+                        </li>
+                    </ul>
+                    <div class="tab-content">
+                        <div id="tab1" class="tab-pane active">
+                            <p>
+                                (旅行先一覧のリスト)
+                            </p>
+                            <ul v-for="(t,index) in travelList">
+                                <li>{{t.name}}<button class="btn btn-secondary" v-on:click="remove(index)">削除</button>&nbsp;</li>
+                            </ul>
+                            <div style="text-align: center;">
+                                <button class="btn btn-primary" v-on:click="getRequest">AIを使って旅行プランを作成</button>
+                            </div>
+                        </div>
+                        <div id="tab2" class="tab-pane">
+                            (旅行先間の経路探索結果)
+                            <!-- 探索結果suggestを表示する -->
+                            <div v-for="s in suggest">
+                                <p>{{s}}</p>
+                            </div>
+                        </div>
+                        <div id="tab3" class="tab-pane">
+                            chatGPT_APIkey
+                            <input type="text" v-model="chatGPT_APIkey">
+                            ekispert_APIkey
+                            <input type="text" v-model="ekispert_APIkey">
+                            <!-- Promptを入れます
+                            <input type="text" v-model="prompt">  -->
+                            <div>
+                                <!-- <button class="btn btn-primary" v-on:click="getRequest">取得</button>         -->
+                                <button class="btn btn-secondary" v-on:click="setLocalStorage">APIkeyの保存</button>
+                            </div>
+                            <div v-if="message !== null">
+                            結果
+                            {{JSON.stringify(message)}}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Page content wrapper-->
+            <div id="page-content-wrapper">
+                <!-- Top navigation-->
+                <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
+                    <div class="container-fluid">
+                        <button class="btn btn-primary" id="sidebarToggle">サイドバー表示切替</button>
+                        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+                    
+                        <!-- POIの表示 -->                        
+                        <button class="btn btn-primary" id="drawMuseum" v-on:click="drawMuseum">博物館の表示</button>
+                        <button class="btn btn-primary" id="drawHotspring" v-on:click="drawHotspring">温泉の表示</button>                      
+                    </div>
+                </nav>
+
+                <!-- Page content-->
+                <div class="container-fluid">
+                    <div id="map" class=".container" style="height: 100vh;"></div>
+                </div>
+            </div>
+        </div>
+    </div> <!-- <div id="app"> -->
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Application Template</title>
+    <!-- Vue.js -->
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  </head>
+  <body>
+    <div id="app">
+      <p>
+        Vue.jsを使用したToDoアプリのサンプルです。
+      </p>
+      <fieldset>
+        <legend>ToDo</legend>
+        <label>タイトル</label>
+        <input type="text" v-model="title">
+        <button class="btn btn-primary" v-on:click="add">追加</button>
+      </fieldset>
+      <ul v-for="(t,index) in todo">
+        <li v-if="t.done"><button class="btn btn-default" v-on:click="remove(index)">削除</button>&nbsp;<label style="text-decoration: line-through;"><input type="checkbox" v-model="t.done">&nbsp;{{t.title}}</label></li>
+        <li v-else><button class="btn btn-default" v-on:click="remove(index)">削除</button>&nbsp;<label><input type="checkbox" v-model="t.done">&nbsp;{{t.title}}</label></li>
+      </ul>
+    </div> <!-- <div id="app"> -->
+    <script src="app.js"></script>
+  </body>
+</html>
